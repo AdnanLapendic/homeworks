@@ -67,7 +67,9 @@ public class Client extends JFrame {
 
 		// Socket for server connection
 		try {
+			
 			client = new Socket("127.0.0.1", 2307);
+		
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

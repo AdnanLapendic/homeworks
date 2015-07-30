@@ -69,8 +69,10 @@ public class Server extends JFrame {
 		setVisible(true);
 		// Making ServerSocker and waiting for client to connect
 		try {
+			
 			server = new ServerSocket(2307);
 			client = server.accept();
+		
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
