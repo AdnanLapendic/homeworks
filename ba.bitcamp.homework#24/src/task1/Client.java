@@ -83,6 +83,7 @@ public class Client extends JFrame {
 			while (true) {
 				textFromServer = reader.readLine();
 				msgTextArea.append("Server: " + textFromServer + "\n");
+				
 				// checking if message is one of commands from task#2
 				getAction(textFromServer);
 			}
@@ -106,6 +107,7 @@ public class Client extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 
 			if (e.getSource() == sendButton) {
+			
 				// Taking text/message from TextField
 				String msg = msgField.getText();
 
@@ -120,6 +122,7 @@ public class Client extends JFrame {
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
+				
 				// Setting field to be blank
 				msgField.setText("");
 			}

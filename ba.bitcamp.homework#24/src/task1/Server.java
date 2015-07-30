@@ -117,12 +117,14 @@ public class Server extends JFrame {
 					writer.write(msg);
 					writer.newLine();
 					writer.flush();
+					
 					// Appending messages to TextArea
 					msgTextArea.append("Me: " + msg + "\n");
 
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
+				
 				// Deleting sent message from TextField
 				msgField.setText("");
 			}
