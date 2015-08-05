@@ -8,6 +8,15 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
+/**
+ * AbcThread extends JFrame. In this class a little GUI frame was made, and on
+ * that frame alphabet is writing(one letter every second). On that frame there
+ * is a button "Stop", which stops writing alphabet but does not terminate
+ * program.
+ * 
+ * @author Adnan Lapendic
+ *
+ */
 public class AbcThread extends JFrame {
 
 	private static final long serialVersionUID = -6656642029200918546L;
@@ -33,6 +42,13 @@ public class AbcThread extends JFrame {
 
 	}
 
+	/**
+	 * Inner class Action implements ActionListener. This class is used to add
+	 * ActionListener on button "Stop" which stops writing alphabet.
+	 * 
+	 * @author Adnan Lapendic
+	 *
+	 */
 	class Action implements ActionListener {
 
 		MyThread mt = null;
@@ -50,15 +66,25 @@ public class AbcThread extends JFrame {
 
 	}
 
+	@SuppressWarnings("unused")
 	public static void main(String[] args) {
 
 		AbcThread abc = new AbcThread();
 
 	}
 
+	/**
+	 * Class MyThread implements Runnable interface. This class is used to make
+	 * Thread object. it has one method run() which is writing alphabet on GUI
+	 * Frame.
+	 * 
+	 * @author Adnan LApendic
+	 *
+	 */
 	static class MyThread implements Runnable {
 		Thread t = new Thread();
 
+		@SuppressWarnings("static-access")
 		@Override
 		public void run() {
 			String s = "";
@@ -70,7 +96,7 @@ public class AbcThread extends JFrame {
 				try {
 
 					t.sleep(1000);
-				
+
 				} catch (InterruptedException e) {
 					i = BREAK;
 				}
