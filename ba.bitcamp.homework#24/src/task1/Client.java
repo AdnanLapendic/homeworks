@@ -142,19 +142,25 @@ public class Client extends JFrame {
 
 		try {
 
-			String[] line = text.split(" ", 2);
-			File file = new File(line[1]);
 
-			if (line[0].equals("/open")) {
+			if (text.startsWith("/open")) {
+				String[] line = text.split(" ", 2);
+				File file = new File(line[1]);
 				Desktop.getDesktop().open(file);
 
-			} else if (line[0].equals("/web")) {
+			} else if (text.startsWith("/web")) {
+				String[] line = text.split(" ", 2);
+				File file = new File(line[1]);
 				Desktop.getDesktop().browse(new URL("http://" + line[1]).toURI());
 
-			} else if (line[0].equals("/delete")) {
+			} else if (text.startsWith("/delete")) {
+				String[] line = text.split(" ", 2);
+				File file = new File(line[1]);
 				file.delete();
 
-			} else if (line[0].equals("/list")) {
+			} else if (text.startsWith("/list")) {
+				String[] line = text.split(" ", 2);
+				File file = new File(line[1]);
 				String[] list = file.list();
 
 				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
@@ -168,13 +174,16 @@ public class Client extends JFrame {
 				writer.flush();
 			}
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			System.out.println("Bad path to file, or file does not exist.");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ArrayIndexOutOfBoundsException e) {
-			e.printStackTrace();
+			System.out.println("If you type one of implemented commands, enter path to file or web address after command. ");
+			System.out.println("See Javadoc for method getAction(). ");
 		} catch (URISyntaxException e) {
-			e.printStackTrace();
+			System.out.println("After \"/web\" enter name and domain of wanted website.");
+		} catch(IllegalArgumentException e){
+			System.out.println("Bad path to file, or file does not exist.");
 		}
 
 	}
