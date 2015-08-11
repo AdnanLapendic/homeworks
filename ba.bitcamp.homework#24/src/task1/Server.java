@@ -69,10 +69,10 @@ public class Server extends JFrame {
 		setVisible(true);
 		// Making ServerSocker and waiting for client to connect
 		try {
-			
+
 			server = new ServerSocket(2307);
 			client = server.accept();
-		
+
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -117,14 +117,14 @@ public class Server extends JFrame {
 					writer.write(msg);
 					writer.newLine();
 					writer.flush();
-					
+
 					// Appending messages to TextArea
 					msgTextArea.append("Me: " + msg + "\n");
 
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
-				
+
 				// Deleting sent message from TextField
 				msgField.setText("");
 			}
@@ -144,51 +144,54 @@ public class Server extends JFrame {
 
 		try {
 
+			String[] line = text.split(" ", 2);
 
-			if (text.startsWith("/open")) {
-				String[] line = text.split(" ", 2);
-				File file = new File(line[1]);
-				Desktop.getDesktop().open(file);
+			if (line.length > 1) {
 
-			} else if (text.startsWith("/web")) {
-				String[] line = text.split(" ", 2);
-				File file = new File(line[1]);
-				Desktop.getDesktop().browse(new URL("http://" + line[1]).toURI());
+				if (text.startsWith("/open")) {
+					File file = new File(line[1]);
+					Desktop.getDesktop().open(file);
 
-			} else if (text.startsWith("/delete")) {
-				String[] line = text.split(" ", 2);
-				File file = new File(line[1]);
-				file.delete();
+				} else if (text.startsWith("/web")) {
+					File file = new File(line[1]);
+					Desktop.getDesktop().browse(new URL("http://" + line[1]).toURI());
 
-			} else if (text.startsWith("/list")) {
-				String[] line = text.split(" ", 2);
-				File file = new File(line[1]);
-				String[] list = file.list();
+				} else if (text.startsWith("/delete")) {
+					File file = new File(line[1]);
+					file.delete();
 
-				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
-				writer.write("Files in folder " + file);
-				writer.newLine();
+				} else if (text.startsWith("/list")) {
+					File file = new File(line[1]);
+					String[] list = file.list();
 
-				for (String string : list) {
-					writer.write(string);
+					BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
+					writer.write("Files in folder " + file);
 					writer.newLine();
+
+					for (String string : list) {
+						writer.write(string);
+						writer.newLine();
+					}
+					writer.flush();
 				}
-				writer.flush();
 			}
+
 		} catch (FileNotFoundException e) {
 			System.out.println("Bad path to file, or file does not exist.");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ArrayIndexOutOfBoundsException e) {
-			System.out.println("If you type one of implemented commands, enter path to file or web address after command. ");
+			System.out.println(
+					"If you type one of implemented commands, enter path to file or web address after command. ");
 			System.out.println("See Javadoc for method getAction(). ");
 		} catch (URISyntaxException e) {
 			System.out.println("After \"/web\" enter name and domain of wanted website.");
-		} catch(IllegalArgumentException e){
+		} catch (IllegalArgumentException e) {
 			System.out.println("Bad path to file, or file does not exist.");
 		}
 
 	}
+
 	public static void main(String[] args) {
 
 		new Server();
