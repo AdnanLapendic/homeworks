@@ -15,17 +15,16 @@ import java.net.Socket;
 public class Client {
 
 
-	@SuppressWarnings("resource")
 	public static void main(String[] args) {
 
 		try {
 			
 			//Connecting to server
-			Socket client = new Socket("127.0.0.1", 8000);
+			Socket client = new Socket("localhost", 8000);
 			OutputStream writer = client.getOutputStream();
 			
 			//Reading picture
-			FileInputStream reader = new FileInputStream("C:\\Users\\Adnan\\Desktop\\img.jpg");
+			FileInputStream reader = new FileInputStream("src/image1.jpg");
 
 			byte[] buffer = new byte[1024];
 			int bytesRead;
@@ -35,9 +34,14 @@ public class Client {
 				writer.write(buffer, 0, bytesRead);
 			}
 			
+			client.close();
+			reader.close();
+			writer.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.err.println("Failed or interrupted I/O operation.");
+			System.err.println("Message: " + e.getMessage());
 		}
+		
 
 	}
 

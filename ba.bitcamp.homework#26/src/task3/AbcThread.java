@@ -23,7 +23,7 @@ public class AbcThread extends JFrame {
 
 	private static JLabel abc;
 	private JButton stop;
-	public static int BREAK = 100;
+	public static boolean finished = false;
 	private Thread t;
 
 	public AbcThread() {
@@ -98,7 +98,7 @@ public class AbcThread extends JFrame {
 					t.sleep(1000);
 
 				} catch (InterruptedException e) {
-					i = BREAK;
+					finished = true;
 				}
 			}
 		}

@@ -22,17 +22,22 @@ import java.net.Socket;
 public class Server {
 
 	public static final int PORT = 8787;
+	public static ServerSocket server;
+	public static Socket client;
+	public static BufferedReader reader;
+	public static BufferedWriter writer;
+	
 
 	public static void main(String[] args) {
 
 		try {
-			@SuppressWarnings("resource")
-			ServerSocket server = new ServerSocket(PORT);
-			Socket client = server.accept();
+		
+			server = new ServerSocket(PORT);
+			client = server.accept();
 
 			System.out.println("Client is connected...");
 
-			BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
+			reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
 			String path = null;
 
 			// Reading line from client
@@ -46,7 +51,7 @@ public class Server {
 
 			System.out.println("Message from client has been reicived.");
 
-			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
+			writer = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
 
 			// Writing response to Client
 			writer.write(doesFileExists(path));
@@ -54,7 +59,18 @@ public class Server {
 			writer.flush();
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.err.println("Failed or interrupted I/O operations");
+			System.err.println("Message: " + e.getMessage());
+		}
+		
+		try {
+			server.close();
+			client.close();
+			reader.close();
+			writer.close();
+		} catch (IOException e) {
+			System.err.println("Failed or interrupted I/O operation");
+			System.err.println("Message: " + e.getMessage());
 		}
 
 	}
@@ -69,9 +85,13 @@ public class Server {
 	 * @return 1 or 0
 	 */
 	public static String doesFileExists(String path) {
-		File file = new File(path);
-
-		if (file.exists() == true) {
+		File file = null;
+		
+		if(path != null){
+		file = new File(path);
+		}
+		
+		if (file.exists()) {
 			return "1";
 		} else {
 			return "0";

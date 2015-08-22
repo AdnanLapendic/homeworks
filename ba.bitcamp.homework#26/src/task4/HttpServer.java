@@ -2,9 +2,10 @@ package task4;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileWriter;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -18,27 +19,25 @@ import java.net.Socket;
  */
 public class HttpServer {
 
-	@SuppressWarnings({ "resource", "unused" })
 	public static void main(String[] args) {
 
-		Server s = new Server();
-		s.runServer();
-
 		try {
-			ServerSocket httpServer = new ServerSocket(8000);
+			ServerSocket httpServer = new ServerSocket(8787);
 			while (true) {
 				Socket client = httpServer.accept();
 
-				BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
+				File htmlFile = new File("src/index.html");
+				BufferedReader reader = new BufferedReader(new FileReader(htmlFile));
+				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
 
-				String address = "C:\\Users\\Adnan\\workspace\\homeworks\\ba.bitcamp.homework#26\\src\\index.html";
-				BufferedWriter writer = new BufferedWriter(new FileWriter(address));
-
-				writer.write(
-						"<!DOCTYPE html><html><body><a href=\"http://i477.photobucket.com/albums/rr136/DeathNCash/rock_tux.png\">Picture</a></body></html>");
-				writer.newLine();
-				writer.flush();
-
+				while (reader.ready()) {
+					writer.write(reader.readLine());
+					writer.newLine();
+					writer.flush();
+				}
+				httpServer.close();
+				reader.close();
+				writer.close();
 			}
 
 		} catch (IOException e) {

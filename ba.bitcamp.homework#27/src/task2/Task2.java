@@ -96,9 +96,9 @@ public class Task2 extends JFrame {
 
 				int pixel = image.getRGB(i, column);
 				image.setRGB(i, column, 255 - pixel);
-				
-				//Setting thread to sleep for one [ms] 
-				//just for visual effect
+
+				// Setting thread to sleep for one [ms]
+				// just for visual effect
 				try {
 					Thread.sleep(1);
 
@@ -111,7 +111,7 @@ public class Task2 extends JFrame {
 
 	public static void main(String[] args) {
 
-		//Trying to read image from disk
+		// Trying to read image from disk
 		try {
 			image = ImageIO.read(new File("src/img1.jpg"));
 		} catch (IOException e1) {
@@ -120,20 +120,20 @@ public class Task2 extends JFrame {
 
 		new Task2();
 
-		//Adding threads
+		// Adding threads
 		for (int i = 0; i < 16; i++) {
 			Worker w = new Worker();
 			w.start();
 			workers.add(w);
 		}
-		
-		//Adding jobs to queue
+
+		// Adding jobs to queue
 		for (int i = 0; i < image.getHeight(); i++) {
 			queue.add(new Task(i));
 		}
 
-		//Sending them to work
-		for(Worker w:workers){
+		// Sending them to work
+		for (Worker w : workers) {
 			try {
 				w.join();
 			} catch (InterruptedException e) {

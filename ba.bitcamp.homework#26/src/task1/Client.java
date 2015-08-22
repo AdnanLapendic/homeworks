@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
@@ -18,18 +19,21 @@ import java.util.Scanner;
  *
  */
 public class Client {
+	public static Scanner in;
+	public static Socket client;
+	public static BufferedWriter writer;
+	public static BufferedReader reader;
 
-	@SuppressWarnings("resource")
 	public static void main(String[] args) {
 
-		Scanner in = new Scanner(System.in);
+		in = new Scanner(System.in);
 
 		try {
-			Socket client = new Socket("127.0.0.1", Server.PORT);
+			client = new Socket("127.0.0.1", Server.PORT);
 
 			System.out.println("Enter path of file.");
 
-			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
+			writer = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
 
 			//Writing path on Console
 			while (client.isConnected()) {
@@ -41,28 +45,44 @@ public class Client {
 				break;
 			}
 
-			BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-
+			reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
+			String msgFromServer = reader.readLine();
+			
 			//Checking response from Server
-			while (true) {
-				if (reader.readLine().equals("1")) {
+			while (client.isConnected()) {
+				
+				if ("1".equals(msgFromServer)) {
 					System.out.println("File does exist");
 					break;
-				} else if (reader.readLine().equals("0")) {
-					System.out.println("File does not exist.");
+				} else if ("0".equals(msgFromServer)) {
+					System.err.println("File does not exist.");
 					break;
 				} else {
-					System.out.println("ERROR");
+					System.err.println("ERROR");
+					break;
 				}
-				break;
+				
 			}
-			
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			System.err.println("IP address of a host could not be determined");
+			System.err.println("Message: " +e.getMessage());
+			System.exit(1);
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.err.println("Failed or interrupted I/O operation");
+			System.err.println("Message: " + e.getMessage());
+			System.exit(1);
+			
 		}
 
+		in.close();
+		try {
+			client.close();
+			reader.close();
+			writer.close();
+		} catch (IOException e) {
+			System.err.println("Failed or interrupted I/O operation");
+			System.err.println("Message: " + e.getMessage());
+		}
 	}
 
 }

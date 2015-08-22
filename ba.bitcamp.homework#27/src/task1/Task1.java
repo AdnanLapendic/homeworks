@@ -1,16 +1,12 @@
 package task1;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
-
-import javax.swing.JFrame;
 
 /**
  * This class is used to make a program for counting letters in any text
@@ -22,15 +18,16 @@ import javax.swing.JFrame;
 public class Task1 {
 
 	private static BufferedReader reader;
-	private static BufferedWriter writer;
 	private static LinkedBlockingQueue<Task> queue;
 	private static ArrayList<Worker> workers;
-	private static char firstLether;
+	private static char firstLetter;
 	private static int counter = 0;
 	private static Object o = new Object();
 
 	/**
 	 * Main is used to test our program
+	 * 
+	 * @throws IOException
 	 */
 	public static void main(String[] args) {
 		queue = new LinkedBlockingQueue<>();
@@ -38,53 +35,47 @@ public class Task1 {
 		long start = System.currentTimeMillis();
 
 		try {
-
 			// Finding and remembering first letter in document
 			reader = new BufferedReader(new InputStreamReader(new FileInputStream("src/TLOTR.txt")));
-			firstLether = getFirstChar(reader.readLine().toLowerCase());
+			firstLetter = reader.readLine().toLowerCase().charAt(0);
+			System.out.println("First letter in text=" + firstLetter);
 
 			// Reading line by line
 			while (reader.ready()) {
 
 				String line = reader.readLine().toLowerCase();
-				System.out.println(line);
-				// Going through every char in every string
-				for (int i = 0; i < line.length(); i++) {
-					char c = line.charAt(i);
-					// If letter is same add 1 to counter
-					if (firstLether == c) {
-						System.out.println(counter);
-						counter++;
-					}
+				queue.add(new Task(line));
+			}
+
+			// Making Threads/Workers and starting them
+			for (int i = 0; i < 8; i++) {
+				Worker w = new Worker();
+				w.start();
+				// adding Threads to ArrayList
+				workers.add(w);
+			}
+
+			for (Worker w : workers) {
+				try {
+					w.join();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
 			}
+
+			System.out.println("Time: " + (System.currentTimeMillis() - start));
+			System.out.println("Letter counter: " + counter);
+			
+			reader.close();
+
 		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
+			System.out.println("Could not open file. Check if file exist, or check file path");
+	
 		} catch (IOException e) {
 			e.printStackTrace();
+		
 		}
-
-		// Making Threads/Workers and starting them
-		for (int i = 0; i < 8; i++) {
-			Worker w = new Worker();
-			w.start();
-			// adding Threads to ArrayList
-			workers.add(w);
-		}
-
-		for (Worker w : workers) {
-
-			try {
-
-				w.join();
-
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		System.out.println("Time: " + (System.currentTimeMillis() - start));
-		System.out.println("Lether counter: " + counter);
-
+		
 	}
 
 	/**
@@ -97,19 +88,17 @@ public class Task1 {
 
 		@Override
 		public void run() {
-
 			while (!queue.isEmpty()) {
 				try {
 
-					Task t = queue.take();
-					t.run();
+					Runnable r = queue.take();
+					r.run();
 
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
 		}
-
 	}
 
 	/**
@@ -133,40 +122,16 @@ public class Task1 {
 
 		@Override
 		public void run() {
-			try {
-				reader = new BufferedReader(new InputStreamReader(new FileInputStream("src/TLOTR.txt")));
-				try {
-					while (reader.ready()) {
-
-						synchronized (o) {
-							String line = reader.readLine().toLowerCase();
-						}
-
+			// Going through every char in every string
+			for (int i = 0; i < line.length() - 1; i++) {
+				// if letters are same increase counter by one
+				if (firstLetter == line.charAt(i)) {
+					synchronized (o) {
+						System.out.println(counter);
+						counter++;
 					}
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (NullPointerException e1) {
-
 				}
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
 			}
-
 		}
-
 	}
-
-	/**
-	 * Method that returns first letter in any text file
-	 * 
-	 * @param line
-	 *            First line in document
-	 * @return First letter of first line
-	 */
-	public static char getFirstChar(String line) {
-		char c = line.charAt(0);
-		return c;
-
-	}
-
 }
